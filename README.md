@@ -11,7 +11,7 @@ https://black-scholes-option-pricing-modeller.streamlit.app/
 ## 🧑‍💻 Pre-requisites for Build and Run environment:
 
 1. **Python 3.12.4 64-bit**
-2. Run command on the dir `python -m streamlit run streamlit_app.py` should launch the app on `localhost:8501` (streamlit default)
+2. Run this command on the dir `python -m streamlit run streamlit_app.py` should launch the app on `localhost:8501` (streamlit default)
 
 ## 🚀 Features:
 
