@@ -54,6 +54,7 @@ class BlackScholes:
 
         # Gamma
         self.calculate_greeks_gamma(time_to_maturity, strike, volatility, d1)
+        return self.call_price, self.put_price
 
     def calculate_d1(self, time_to_maturity, strike, current_price, volatility, interest_rate):
         """
@@ -119,17 +120,19 @@ class BlackScholes:
 
 
 if __name__ == "__main__":
-    time_to_maturity = 2
-    strike = 90
-    current_price = 100
-    volatility = 0.2
-    interest_rate = 0.05
+    time_to_maturity = 2    # Time to expiration (in years)
+    strike = 90             # Strike price
+    current_price = 100     # Current stock price
+    volatility = 0.2        # Volatility
+    interest_rate = 0.05    # Risk-free interest rate
 
-    # Black Scholes
+    # Creating Black Scholes instance
     BS = BlackScholes(
         time_to_maturity=time_to_maturity,
         strike=strike,
         current_price=current_price,
         volatility=volatility,
         interest_rate=interest_rate)
-    BS.run()
+    call_price, put_price = BS.run()
+    print(f"Call Option Price: {call_price}")
+    print(f"Put Option Price: {put_price}")

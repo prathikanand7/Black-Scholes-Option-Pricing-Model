@@ -6,6 +6,7 @@ import plotly.graph_objects as go
 from numpy import log, sqrt, exp  # Make sure to import these
 import matplotlib.pyplot as plt
 import seaborn as sns
+from BlackScholes import BlackScholes
 
 #######################
 # Page configuration
@@ -63,82 +64,6 @@ st.markdown("""
 # (Include the BlackScholes class definition here)
 
 
-class BlackScholes:
-    """
-    A class to represent the Black-Scholes model for option pricing.
-    """
-
-    def __init__(
-        self,
-        time_to_maturity: float,
-        strike: float,
-        current_price: float,
-        volatility: float,
-        interest_rate: float,
-    ):
-        """
-        Initialize the Black-Scholes model with parameters.
-
-        Parameters:
-        - time_to_maturity: Time to expiration (years)
-        - strike: Strike price of the option
-        - current_price: Current stock price
-        - volatility: Volatility of the stock (annualized)
-        - interest_rate: Risk-free interest rate (annualized)
-        """
-        self.time_to_maturity = time_to_maturity
-        self.strike = strike
-        self.current_price = current_price
-        self.volatility = volatility
-        self.interest_rate = interest_rate
-
-    def calculate_prices(
-        self,
-    ):
-        """
-        Calculate the Black-Scholes option prices for call and put.
-
-        Returns:
-        - call_price: The price of the call option
-        - put_price: The price of the put option
-        """
-        time_to_maturity = self.time_to_maturity
-        strike = self.strike
-        current_price = self.current_price
-        volatility = self.volatility
-        interest_rate = self.interest_rate
-
-        d1 = (
-            log(current_price / strike) +
-            (interest_rate + 0.5 * volatility ** 2) * time_to_maturity
-        ) / (
-            volatility * sqrt(time_to_maturity)
-        )
-        d2 = d1 - volatility * sqrt(time_to_maturity)
-
-        call_price = current_price * norm.cdf(d1) - (
-            strike * exp(-(interest_rate * time_to_maturity)) * norm.cdf(d2)
-        )
-        put_price = (
-            strike * exp(-(interest_rate * time_to_maturity)) * norm.cdf(-d2)
-        ) - current_price * norm.cdf(-d1)
-
-        self.call_price = call_price
-        self.put_price = put_price
-
-        # GREEKS
-        # Delta
-        self.call_delta = norm.cdf(d1)
-        self.put_delta = 1 - norm.cdf(d1)
-
-        # Gamma
-        self.call_gamma = norm.pdf(d1) / (
-            strike * volatility * sqrt(time_to_maturity)
-        )
-        self.put_gamma = self.call_gamma
-
-        return call_price, put_price
-
 # Function to generate heatmaps
 # ... your existing imports and BlackScholes class definition ...
 
@@ -179,6 +104,25 @@ with st.sidebar:
     spot_range = np.linspace(spot_min, spot_max, 10)
     vol_range = np.linspace(vol_min, vol_max, 10)
 
+# Main Page for Output Display
+st.title("Black-Scholes Pricing Model")
+
+# Table of Inputs
+input_data = {
+    "Current Asset Price": [current_price],
+    "Strike Price": [strike],
+    "Time to Maturity (Years)": [time_to_maturity],
+    "Volatility (σ)": [volatility],
+    "Risk-Free Interest Rate": [interest_rate/100],
+}
+input_df = pd.DataFrame(input_data)
+st.table(input_df)
+
+# Calculate Call and Put values
+bs_model = BlackScholes(time_to_maturity, strike,
+                        current_price, volatility, interest_rate/100)
+call_price, put_price = bs_model.run()
+
 
 def plot_pnl_heatmap(bs_model, spot_range, vol_range, strike, purchase_price_call, purchase_price_put):
     """
@@ -196,7 +140,7 @@ def plot_pnl_heatmap(bs_model, spot_range, vol_range, strike, purchase_price_cal
                 volatility=vol,
                 interest_rate=bs_model.interest_rate
             )
-            call_price, put_price = bs_temp.calculate_prices()
+            call_price, put_price = bs_temp.run()
             # Calculate P&L
             call_pnl[i, j] = max(0, spot - strike) - purchase_price_call
             put_pnl[i, j] = max(0, strike - spot) - purchase_price_put
@@ -236,7 +180,7 @@ def plot_heatmap(bs_model, spot_range, vol_range, strike):
                 volatility=vol,
                 interest_rate=bs_model.interest_rate
             )
-            bs_temp.calculate_prices()
+            bs_temp.run()
             call_prices[i, j] = bs_temp.call_price
             put_prices[i, j] = bs_temp.put_price
 
@@ -258,25 +202,6 @@ def plot_heatmap(bs_model, spot_range, vol_range, strike):
 
     return fig_call, fig_put
 
-
-# Main Page for Output Display
-st.title("Black-Scholes Pricing Model")
-
-# Table of Inputs
-input_data = {
-    "Current Asset Price": [current_price],
-    "Strike Price": [strike],
-    "Time to Maturity (Years)": [time_to_maturity],
-    "Volatility (σ)": [volatility],
-    "Risk-Free Interest Rate": [interest_rate/100],
-}
-input_df = pd.DataFrame(input_data)
-st.table(input_df)
-
-# Calculate Call and Put values
-bs_model = BlackScholes(time_to_maturity, strike,
-                        current_price, volatility, interest_rate/100)
-call_price, put_price = bs_model.calculate_prices()
 
 # Display Call and Put Values in colored tables
 col1, col2 = st.columns([1, 1], gap="small")
