@@ -61,14 +61,9 @@ st.markdown("""
 </style>
 """, unsafe_allow_html=True)
 
-# (Include the BlackScholes class definition here)
-
-
-# Function to generate heatmaps
-# ... your existing imports and BlackScholes class definition ...
-
-
+##########################
 # Sidebar for User Inputs
+##########################
 with st.sidebar:
     st.title("📊Black-Scholes Model")
     st.write("`Created by:`")
@@ -81,7 +76,7 @@ with st.sidebar:
         "Time to Maturity (in years)", value=1.0)
     volatility = st.number_input("Volatility σ (annualized)", value=0.2)
     interest_rate = st.number_input(
-        "Risk-Free Interest Rate (annualized %)", value=0.05)
+        "Risk-Free Interest Rate (annualized %)", value=5.0)
 
 # New inputs for purchase prices
     purchase_price_call = st.number_input(
@@ -104,16 +99,19 @@ with st.sidebar:
     spot_range = np.linspace(spot_min, spot_max, 10)
     vol_range = np.linspace(vol_min, vol_max, 10)
 
+###############################
 # Main Page for Output Display
+###############################
+
 st.title("Black-Scholes Pricing Model")
 
 # Table of Inputs
 input_data = {
-    "Current Asset Price": [current_price],
+    "Current Stock Price": [current_price],
     "Strike Price": [strike],
-    "Time to Maturity (Years)": [time_to_maturity],
-    "Volatility (σ)": [volatility],
-    "Risk-Free Interest Rate": [interest_rate/100],
+    "Time to Maturity (in years)": [time_to_maturity],
+    "Volatility σ (annualized) ": [volatility],
+    "Risk-Free Interest Rate (%)": [interest_rate/100],
 }
 input_df = pd.DataFrame(input_data)
 st.table(input_df)
