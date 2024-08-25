@@ -64,6 +64,10 @@ st.markdown("""
 
 
 class BlackScholes:
+    """
+    A class to represent the Black-Scholes model for option pricing.
+    """
+
     def __init__(
         self,
         time_to_maturity: float,
@@ -72,6 +76,16 @@ class BlackScholes:
         volatility: float,
         interest_rate: float,
     ):
+        """
+        Initialize the Black-Scholes model with parameters.
+
+        Parameters:
+        - time_to_maturity: Time to expiration (years)
+        - strike: Strike price of the option
+        - current_price: Current stock price
+        - volatility: Volatility of the stock (annualized)
+        - interest_rate: Risk-free interest rate (annualized)
+        """
         self.time_to_maturity = time_to_maturity
         self.strike = strike
         self.current_price = current_price
@@ -81,6 +95,13 @@ class BlackScholes:
     def calculate_prices(
         self,
     ):
+        """
+        Calculate the Black-Scholes option prices for call and put.
+
+        Returns:
+        - call_price: The price of the call option
+        - put_price: The price of the put option
+        """
         time_to_maturity = self.time_to_maturity
         strike = self.strike
         current_price = self.current_price
@@ -160,6 +181,9 @@ with st.sidebar:
 
 
 def plot_pnl_heatmap(bs_model, spot_range, vol_range, strike, purchase_price_call, purchase_price_put):
+    """
+    Plot P&L heatmaps for Call and Put options based on purchase prices.
+    """
     call_pnl = np.zeros((len(vol_range), len(spot_range)))
     put_pnl = np.zeros((len(vol_range), len(spot_range)))
 
@@ -197,6 +221,9 @@ def plot_pnl_heatmap(bs_model, spot_range, vol_range, strike, purchase_price_cal
 
 
 def plot_heatmap(bs_model, spot_range, vol_range, strike):
+    """
+    Plot heatmaps for Call and Put options based on Black-Scholes method.
+    """
     call_prices = np.zeros((len(vol_range), len(spot_range)))
     put_prices = np.zeros((len(vol_range), len(spot_range)))
 
